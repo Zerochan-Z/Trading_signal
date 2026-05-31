@@ -1,9 +1,10 @@
+import sys
 import pandas as pd
 import yfinance as yf
-import numpy as np
 import os
 
-file_name = 'signal_data.csv'
+file_name = sys.argv[1]
+period = int(sys.argv[2])
 
 if os.path.exists(file_name):
     os.remove(file_name)
@@ -17,27 +18,24 @@ try:
 
     df = df[['Date', 'Close']].copy()
     df.to_csv(file_name, index = False)
-    print(f'Data saved. Shape: {df.shape}')
     
     df['Close'] = pd.to_numeric(df['Close']).round(4)
 
     df['MA'] = float('nan')
-    for i in range(9,len(df)):
-        window = df['Close'].iloc[i-9:i+1]
-        df.loc[i, 'MA'] = window.mean().round(4)
+    for i in range(period -1, len(df)):
+        df.loc[i, 'MA'] = df['Close'].iloc[i - period +1 : i+1].mean().round(4)
 
     df['Signal'] = 'Hold'
-    for i in range(9, len(df)):
-        current_close = df.loc[i, 'Close']
-        current_ma = df.loc[i, 'MA']
-        
-        if current_close > current_ma:
-            df.loc[i, 'Signal'] = 'Buy'
-        elif current_close < current_ma:
-            df.loc[i, 'Signal'] = 'Sell'
-        else:
+    for i in range(period -1, len(df)):
+        diff = abs(df.loc[i, 'Close'] - df.loc[i, 'MA']) / df.loc[i,'MA']
+        if diff <= 0.01:
             df.loc[i, 'Signal'] = 'Hold'
-
+        elif df.loc[i, 'Close'] > df.loc[i, 'MA']:
+            df.loc[i, 'Signal'] = 'Buy'
+        else:
+            df.loc[i, 'Signal'] = 'Sell'
+    
+    print(f'\nMoving Average Period: {period}')
     print('\n' + '-'*50 + '\n')
     print(df[['Date', 'Close', 'MA', 'Signal']].head(15))
 
