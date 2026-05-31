@@ -38,7 +38,7 @@ Last project before orientation day comes. (‾◡◝)
 
 | Code | Description |
 |------|-------------|
-| `yf.download('AAPL', start, end)` | Download Apple stock data |
+| `yf.download('AAPL', start, end)` | Download Apple stock data (yf stores ticker below ['Close'] |
 | `df.columns.droplevel(1)` | Remove ticker level from column headers |
 | `df.reset_index(inplace=True)` | Turn date index into a regular column |
 | `df[['Date', 'Close']].copy()` | Keep only Date and Close columns |
