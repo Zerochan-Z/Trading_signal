@@ -124,5 +124,5 @@ Moving Average Period: 10
 
 ---
 
-> *Last updated: June 2026*
+> *Last updated: May 2026*
 ```
